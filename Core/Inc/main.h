@@ -36,7 +36,7 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+extern volatile uint32_t millisec01;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -67,3 +67,4 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
+extern volatile uint32_t millisec01;

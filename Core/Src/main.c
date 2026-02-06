@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+  volatile uint32_t millisec01;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -81,7 +81,7 @@ static void MX_USART1_UART_Init(void);
   */
 int main(void)
 {
-
+  millisec01 =0;
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -123,6 +123,7 @@ int main(void)
     HAL_IWDG_Refresh(&hiwdg);
     for (uint32_t i=0; i < 1000000; i++) {
       i++;
+      HAL_IWDG_Refresh(&hiwdg);
       }
 
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);

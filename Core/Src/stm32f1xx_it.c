@@ -216,13 +216,18 @@ void RTC_IRQHandler(void)
   /* USER CODE END RTC_IRQn 1 */
 }
 
+uint16_t millisec02=0;
 /**
   * @brief This function handles TIM1 update interrupt.
   */
 void TIM1_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_IRQn 0 */
-  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_1);
+  millisec01++;
+  if (millisec01 >= 50) {
+    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_1);
+    millisec01=0;
+  }
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_IRQn 1 */
@@ -236,7 +241,11 @@ void TIM1_UP_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-
+  millisec02++;
+  if (millisec02 >= 50) {
+    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
+    millisec02=0;
+  }
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */

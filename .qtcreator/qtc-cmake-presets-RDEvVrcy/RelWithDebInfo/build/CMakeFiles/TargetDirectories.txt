@@ -1,0 +1,2 @@
+/media/flexshit/99gentoo/012STM32/proj007stm32c6t6CMAKE/.qtcreator/qtc-cmake-presets-RDEvVrcy/RelWithDebInfo/build/CMakeFiles/edit_cache.dir
+/media/flexshit/99gentoo/012STM32/proj007stm32c6t6CMAKE/.qtcreator/qtc-cmake-presets-RDEvVrcy/RelWithDebInfo/build/CMakeFiles/rebuild_cache.dir

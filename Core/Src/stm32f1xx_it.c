@@ -22,6 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "001.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -210,6 +211,11 @@ void RTC_IRQHandler(void)
   /* USER CODE BEGIN RTC_IRQn 0 */
   globalsecuptime++;
   HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
+  if ( (globalsecuptime % 10) == 1) {
+    seryiUART1send("test\n\r");
+    seryiUART1send("RTC 1 second\n\r");
+    seryiUART1send("test\n\r");
+  }
   //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
   /* USER CODE END RTC_IRQn 0 */
   HAL_RTCEx_RTCIRQHandler(&hrtc);
@@ -230,6 +236,11 @@ void TIM1_UP_IRQHandler(void)
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_1);
     //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
     millisec03=0;
+    if ( (globalsecuptime % 10) == 2) {
+      seryiUART1send("test\n\r");
+      seryiUART1send("TIM1 1 second\n\r");
+      seryiUART1send("test\n\r");
+    }
   }
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
@@ -249,6 +260,11 @@ void TIM2_IRQHandler(void)
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
     //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
     millisec01=0;
+    if ( (globalsecuptime % 10) == 3) {
+      seryiUART1send("test\n\r");
+      seryiUART1send("TIM2 1 second\n\r");
+      seryiUART1send("test\n\r");
+    }
   }
 
   //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
@@ -270,6 +286,11 @@ void TIM3_IRQHandler(void)
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
     //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
     millisec02=0;
+    if ( (globalsecuptime % 10) == 4) {
+      seryiUART1send("test\n\r");
+      seryiUART1send("TIM3 1 second\n\r");
+      seryiUART1send("test\n\r");
+    }
   }
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);

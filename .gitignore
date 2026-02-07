@@ -2,3 +2,4 @@
 build/*
 cmake/*
 build/**
+etc/001trash

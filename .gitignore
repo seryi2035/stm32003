@@ -3,4 +3,4 @@ build/*
 cmake/*
 build/**
 etc/001trash
-!build/bluepillFSname-Debug/proj007stm32c6t6CMAKE.elf
+.qtcreator/CMakeLists.txt.user

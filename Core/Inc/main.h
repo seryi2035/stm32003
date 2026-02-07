@@ -37,6 +37,9 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 extern volatile uint32_t millisec01;
+extern volatile uint32_t millisec02;
+extern volatile uint32_t millisec03;
+extern volatile uint32_t globalsecuptime;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

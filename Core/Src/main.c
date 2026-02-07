@@ -18,7 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-  volatile uint32_t millisec01;
+volatile uint32_t millisec01;
+volatile uint32_t millisec02;
+volatile uint32_t millisec03;
+volatile uint32_t globalsecuptime;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -72,7 +75,14 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#include <stdio.h>
+#include <string.h>
+#define UID_BASE 0x1FFFF7E8
 
+uint16_t *idBase0 = (uint16_t*)(UID_BASE);
+uint16_t *idBase1 = (uint16_t*)(UID_BASE + 0x02);
+uint32_t *idBase2 = (uint32_t*)(UID_BASE + 0x04);
+uint32_t *idBase3 = (uint32_t*)(UID_BASE + 0x08);
 /* USER CODE END 0 */
 
 /**
@@ -81,7 +91,11 @@ static void MX_USART1_UART_Init(void);
   */
 int main(void)
 {
+  uint32_t RTCcounter01 = 0;
   millisec01 =0;
+  globalsecuptime = 0;
+
+  char buffer[64] = {0,};
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -104,8 +118,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_I2C1_Init();
-  MX_IWDG_Init();
+  //MX_I2C1_Init();
+  //MX_IWDG_Init();
   MX_RTC_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
@@ -114,19 +128,21 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
-
+  millisec01 = 0;
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-    HAL_IWDG_Refresh(&hiwdg);
-    for (uint32_t i=0; i < 1000000; i++) {
-      i++;
-      HAL_IWDG_Refresh(&hiwdg);
+   // HAL_IWDG_Refresh(&hiwdg);
+    if (millisec01 == 25) {
+      RTCcounter01 = globalsecuptime;
+      sprintf(buffer, "UID %x-%x-%lx-%lx\n", *idBase0, *idBase1, *idBase2, *idBase3);
+      HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), 1000);
+      //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
       }
-
-    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
+    //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+    //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -257,7 +273,6 @@ static void MX_RTC_Init(void)
 
   RTC_TimeTypeDef sTime = {0};
   RTC_DateTypeDef DateToUpdate = {0};
-  RTC_AlarmTypeDef sAlarm = {0};
 
   /* USER CODE BEGIN RTC_Init 1 */
 
@@ -266,8 +281,8 @@ static void MX_RTC_Init(void)
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
-  hrtc.Init.AsynchPrediv = RTC_AUTO_1_SECOND;
-  hrtc.Init.OutPut = RTC_OUTPUTSOURCE_ALARM;
+  hrtc.Init.AsynchPrediv = 32767;
+  hrtc.Init.OutPut = RTC_OUTPUTSOURCE_NONE;
   if (HAL_RTC_Init(&hrtc) != HAL_OK)
   {
     Error_Handler();
@@ -296,19 +311,10 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-
-  /** Enable the Alarm A
-  */
-  sAlarm.AlarmTime.Hours = 0;
-  sAlarm.AlarmTime.Minutes = 0;
-  sAlarm.AlarmTime.Seconds = 0;
-  sAlarm.Alarm = RTC_ALARM_A;
-  if (HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, RTC_FORMAT_BIN) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN RTC_Init 2 */
-
+  HAL_NVIC_SetPriority(RTC_IRQn, 3, 1); // 0,0 is priority and subpriority
+  HAL_NVIC_EnableIRQ(RTC_IRQn);
+  HAL_RTCEx_SetSecond_IT(&hrtc);
   /* USER CODE END RTC_Init 2 */
 
 }
@@ -354,7 +360,9 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM1_Init 2 */
-
+  HAL_NVIC_SetPriority(TIM1_UP_IRQn, 2, 1); // 0,0 is priority and subpriority
+  HAL_NVIC_EnableIRQ(TIM1_UP_IRQn);
+  HAL_TIM_Base_Start_IT(&htim1);
   /* USER CODE END TIM1_Init 2 */
 
 }
@@ -392,14 +400,16 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN TIM2_Init 2 */
-
+//HAL_NVIC_SetPriority(TIM2_IRQn, 2, 0); // 0,0 is priority and subpriority
+//HAL_NVIC_EnableIRQ(TIM2_IRQn);
+  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END TIM2_Init 2 */
 
 }
@@ -444,7 +454,7 @@ static void MX_TIM3_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM3_Init 2 */
-
+  HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END TIM3_Init 2 */
 
 }
@@ -477,7 +487,7 @@ static void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
-
+  HAL_UART_Init(huart1);
   /* USER CODE END USART1_Init 2 */
 
 }
@@ -507,7 +517,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
 
 
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
 
 
   /*Configure GPIO pins : PA5 PA6 PA7 */
@@ -577,3 +587,11 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
+/*void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+        if(htim->Instance == TIM2) //check if the interrupt comes from TIM2
+        {
+                HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+        }
+}*/

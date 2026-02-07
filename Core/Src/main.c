@@ -137,7 +137,7 @@ int main(void)
    // HAL_IWDG_Refresh(&hiwdg);
     if (millisec01 == 25) {
       RTCcounter01 = globalsecuptime;
-      sprintf(buffer, "UID %x-%x-%lx-%lx\n", *idBase0, *idBase1, *idBase2, *idBase3);
+      sprintf(buffer, "001UID %x-%x-%lx-%lx\n", *idBase0, *idBase1, *idBase2, *idBase3);
       HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), 1000);
       //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
       }
@@ -487,7 +487,7 @@ static void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
-  HAL_UART_Init(huart1);
+
   /* USER CODE END USART1_Init 2 */
 
 }
